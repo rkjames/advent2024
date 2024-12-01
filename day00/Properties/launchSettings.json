@@ -2,7 +2,7 @@
   "profiles": {
     "day00": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Repos\\advent2024\\advent2024\\day00"
+      "workingDirectory": "C:\\Repos\\advent2024\\day00"
     }
   }
 }
