@@ -21,14 +21,27 @@ class Program
             right.Add(int.Parse(s[3]));
         }
 
-        left.Sort();
-        right.Sort();
-        for (int i = 0; i < left.Count; i++)
+        var count = new Dictionary<int, int>();
+        foreach (int i in right)
         {
-            int diff = Math.Abs(left[i] - right[i]);
-            sum += diff;
+            if (count.ContainsKey(i))
+            {
+                count[i] += 1;
+            }
+            else
+            {
+                count.Add(i, 1);
+            }
         }
 
-        Console.WriteLine($"day 01 {sum}");
+        foreach (int i in left)
+        {
+            if (count.ContainsKey(i))
+            {
+                sum += i * count[i];
+            }
+        }
+
+        Console.WriteLine($"day 01p2 {sum}");
     }
 }
