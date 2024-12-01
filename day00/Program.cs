@@ -8,26 +8,23 @@ class Program
     static void Main(string[] args)
     {
         int sum = 0;
-        //string[] lines = File.ReadAllLines("example.txt"); 
         string[] lines = File.ReadAllLines("input.txt");
+
         foreach (string line in lines)
         {
-            int first = 0;
-            int last = 0;
-            bool foundfirst = false;
-            foreach (char c in line)
+            var digits = line.Where(char.IsDigit).Select(c => int.Parse(c.ToString())).ToList();
+
+            if (digits.Count > 0)
             {
-                if (char.IsDigit(c)) {
-                    last = int.Parse(c.ToString());
-                    if (!foundfirst)
-                    {
-                        first = last;
-                        foundfirst = true;
-                    }
-                }
+                int firstDigit = digits.First();
+                int lastDigit = digits.Last();
+                Console.WriteLine($"{firstDigit} {lastDigit}");
+                sum += firstDigit * 10 + lastDigit;
             }
-            Console.WriteLine(first + " " + last);
-            sum += first * 10 + last; 
+            else
+            {
+                Console.WriteLine("No digits found in line.");
+            }
         }
 
         Console.WriteLine(sum);
