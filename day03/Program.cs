@@ -16,8 +16,9 @@ class Program
         //string[] lines = File.ReadAllLines("example.txt");
         string[] lines = File.ReadAllLines("input.txt");
 
-        var regex = new Regex(@"mul\((\d{1,3}),(\d{1,3})\)");
+        var regex = new Regex(@"mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)");
         int sum = 0;
+        bool domul = true;
 
         foreach (string line in lines)
         {
@@ -25,10 +26,24 @@ class Program
             var matches = regex.Matches(line);
             foreach (Match match in matches)
             {
-                //Console.WriteLine($"Match: {match.Value}");
-                //Console.WriteLine($"Group 1: {match.Groups[1].Value}");
-                //Console.WriteLine($"Group 2: {match.Groups[2].Value}");
-                sum += int.Parse(match.Groups[1].Value) * int.Parse(match.Groups[2].Value);
+                switch (match.Value)
+                {
+                    case "do()":
+                        //Console.WriteLine("Do");
+                        domul = true;
+                        break;
+                    case "don't()":
+                        //Console.WriteLine("Don't");
+                        domul = false;
+                        break;
+                    default:
+                        //Console.WriteLine($"Match: {match.Value}");
+                        //Console.WriteLine($"Group 1: {match.Groups[1].Value}");
+                        //Console.WriteLine($"Group 2: {match.Groups[2].Value}");
+                        if (domul)
+                            sum += int.Parse(match.Groups[1].Value) * int.Parse(match.Groups[2].Value);
+                        break;
+                }
             }
         }
 
