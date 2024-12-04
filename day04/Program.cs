@@ -10,44 +10,28 @@ using System.Text.RegularExpressions;
 // var digits = line.Where(char.IsDigit).Select(c => int.Parse(c.ToString())).ToList();
 class Program
 {
-    static int search(string[] lines, int startr, int startc)
+    static char check(string[] lines, int r, int c)
     {
-        int found = 0;
-        int rows = lines.Length;
-        int cols = lines[0].Length;
-
-        int[] deltas = { -1, 0, 1 };
-        foreach (int dr in deltas)
+        if (r < 0 || r >= lines.Length || c < 0 || c >= lines[0].Length)
         {
-            foreach (int dc in deltas)
+            return ' ';
+        }
+        return lines[r][c];
+    }
+    static bool search(string[] lines, int r, int c)
+    {
+        // top left to bottom right
+        if ((check(lines, r-1, c-1) == 'M' && check(lines,r+1,c+1) == 'S') ||
+            (check(lines, r - 1, c - 1) == 'S' && check(lines, r + 1, c + 1) == 'M'))
+        {
+            // top right to bottom left
+            if ((check(lines, r - 1, c + 1) == 'M' && check(lines, r + 1, c - 1) == 'S') ||
+                (check(lines, r - 1, c + 1) == 'S' && check(lines, r + 1, c - 1) == 'M'))
             {
-                if (dr == 0 && dc == 0)
-                {
-                    continue;
-                }
-                string goal = "XMAS";
-                int pos = 0;
-                while (pos < goal.Length)
-                {
-                    int r = startr + pos * dr;
-                    int c = startc + pos * dc;
-                    if (r < 0 || r >= rows || c < 0 || c >= cols)
-                    {
-                        break;
-                    }
-                    if (lines[r][c] != goal[pos])
-                    {
-                        break;
-                    }
-                    pos++;
-                }
-                if (pos == goal.Length)
-                {
-                    found++;
-                }
+                return true;
             }
         }
-        return found;
+        return false;
     }
 
     static void Main(string[] args)
@@ -62,13 +46,16 @@ class Program
         {
             for (int c = 0; c < cols; c++)
             {
-                if (lines[r][c] == 'X')
+                if (lines[r][c] == 'A')
                 {
-                    sum += search(lines, r, c);
+                    if (search(lines, r, c))
+                    {
+                        sum++;
+                    }
                 }
             }
         }
 
-        Console.WriteLine($"day 04p1: {sum}" );
+        Console.WriteLine($"day 04p2: {sum}" );
     }
 }
