@@ -10,43 +10,65 @@ using System.Text.RegularExpressions;
 // var digits = line.Where(char.IsDigit).Select(c => int.Parse(c.ToString())).ToList();
 class Program
 {
+    static int search(string[] lines, int startr, int startc)
+    {
+        int found = 0;
+        int rows = lines.Length;
+        int cols = lines[0].Length;
+
+        int[] deltas = { -1, 0, 1 };
+        foreach (int dr in deltas)
+        {
+            foreach (int dc in deltas)
+            {
+                if (dr == 0 && dc == 0)
+                {
+                    continue;
+                }
+                string goal = "XMAS";
+                int pos = 0;
+                while (pos < goal.Length)
+                {
+                    int r = startr + pos * dr;
+                    int c = startc + pos * dc;
+                    if (r < 0 || r >= rows || c < 0 || c >= cols)
+                    {
+                        break;
+                    }
+                    if (lines[r][c] != goal[pos])
+                    {
+                        break;
+                    }
+                    pos++;
+                }
+                if (pos == goal.Length)
+                {
+                    found++;
+                }
+            }
+        }
+        return found;
+    }
 
     static void Main(string[] args)
     {
-        //string[] lines = File.ReadAllLines("example.txt");
+        // string[] lines = File.ReadAllLines("example.txt");
         string[] lines = File.ReadAllLines("input.txt");
 
-        var regex = new Regex(@"mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)");
         int sum = 0;
-        bool domul = true;
-
-        foreach (string line in lines)
+        int rows = lines.Length;
+        int cols = lines[0].Length;
+        for (int r = 0; r < rows; r++)
         {
-            //Console.WriteLine($"Line: {line}");
-            var matches = regex.Matches(line);
-            foreach (Match match in matches)
+            for (int c = 0; c < cols; c++)
             {
-                switch (match.Value)
+                if (lines[r][c] == 'X')
                 {
-                    case "do()":
-                        //Console.WriteLine("Do");
-                        domul = true;
-                        break;
-                    case "don't()":
-                        //Console.WriteLine("Don't");
-                        domul = false;
-                        break;
-                    default:
-                        //Console.WriteLine($"Match: {match.Value}");
-                        //Console.WriteLine($"Group 1: {match.Groups[1].Value}");
-                        //Console.WriteLine($"Group 2: {match.Groups[2].Value}");
-                        if (domul)
-                            sum += int.Parse(match.Groups[1].Value) * int.Parse(match.Groups[2].Value);
-                        break;
+                    sum += search(lines, r, c);
                 }
             }
         }
 
-        Console.WriteLine($"day 03p1: {sum}" );
+        Console.WriteLine($"day 04p1: {sum}" );
     }
 }
