@@ -1,16 +1,8 @@
 ﻿using System;
-//using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text.RegularExpressions;
 
-// LINQ reminders
-// Console.WriteLine("day 01p2 linq: " + left.Sum(i => i * right.Count(c => c == i)));
-// var digits = line.Where(char.IsDigit).Select(c => int.Parse(c.ToString())).ToList();
 class Program
 {
-
     static void Main(string[] args)
     {
         //string[] lines = File.ReadAllLines("example.txt");
