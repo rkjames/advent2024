@@ -35,34 +35,47 @@ class Program
             {
                 var s = line.Split(",");
                 var list = new List<int>();
-                var valid = true;
                 foreach (var num in s)
                 {
                     list.Add(int.Parse(num));
                 }
 
-                for (int i = 0; i < list.Count; i++)
+                var valid = true;
+                var tweaked = false;
+                while (true)
                 {
-                    if (before.ContainsKey(list[i]))
+                    valid = true;
+                    for (int i = 0; i < list.Count && valid; i++)
                     {
-                        for (int j = 0; j < i; j++)
+                        if (before.ContainsKey(list[i]))
                         {
-                            if (before[list[i]].Contains(list[j]))
+                            for (int j = 0; j < i; j++)
                             {
-                                valid = false;
-                                break;
+                                if (before[list[i]].Contains(list[j]))
+                                {
+                                    var temp = list[i];
+                                    list[i] = list[j];
+                                    list[j] = temp;
+                                    valid = false;
+                                    tweaked = true;
+                                    break;
+                                }
                             }
                         }
                     }
+                    if (valid)
+                    {
+                        break;
+                    }
                 }
 
-                if (valid)
+                if (tweaked)
                 {
                     sum += list[list.Count / 2];
                 }
             }
         }
 
-        Console.WriteLine($"day 05p1: {sum}" );
+        Console.WriteLine($"day 05p2: {sum}");
     }
 }
