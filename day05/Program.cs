@@ -16,33 +16,49 @@ class Program
         //string[] lines = File.ReadAllLines("example.txt");
         string[] lines = File.ReadAllLines("input.txt");
 
-        var regex = new Regex(@"mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)");
         int sum = 0;
-        bool domul = true;
-
+        var before = new Dictionary<int, List<int>>();
         foreach (string line in lines)
         {
-            //Console.WriteLine($"Line: {line}");
-            var matches = regex.Matches(line);
-            foreach (Match match in matches)
+            if (line.Contains("|"))
             {
-                switch (match.Value)
+                var s = line.Split("|");
+                int key = int.Parse(s[0]);
+                int value = int.Parse(s[1]);
+                if (!before.ContainsKey(key))
                 {
-                    case "do()":
-                        //Console.WriteLine("Do");
-                        domul = true;
-                        break;
-                    case "don't()":
-                        //Console.WriteLine("Don't");
-                        domul = false;
-                        break;
-                    default:
-                        //Console.WriteLine($"Match: {match.Value}");
-                        //Console.WriteLine($"Group 1: {match.Groups[1].Value}");
-                        //Console.WriteLine($"Group 2: {match.Groups[2].Value}");
-                        if (domul)
-                            sum += int.Parse(match.Groups[1].Value) * int.Parse(match.Groups[2].Value);
-                        break;
+                    before[key] = new List<int>();
+                }
+                before[key].Add(value);
+            }
+            if (line.Contains(","))
+            {
+                var s = line.Split(",");
+                var list = new List<int>();
+                var valid = true;
+                foreach (var num in s)
+                {
+                    list.Add(int.Parse(num));
+                }
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (before.ContainsKey(list[i]))
+                    {
+                        for (int j = 0; j < i; j++)
+                        {
+                            if (before[list[i]].Contains(list[j]))
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (valid)
+                {
+                    sum += list[list.Count / 2];
                 }
             }
         }
