@@ -8,7 +8,7 @@ class Program
     {
         if (cur == 9)
         {
-            top[row, col] = 99;
+            //top[row, col] = 99;
             return 1;
         }
 
@@ -79,7 +79,7 @@ class Program
                 if (top[i, j] == 0)
                 {
                     sum += Search(top, 0, i, j);
-                    Reset(top);
+                    //Reset(top);
                 }
             }
         }
