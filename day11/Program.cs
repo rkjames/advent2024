@@ -3,6 +3,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Numerics;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 
 class Program
 {
@@ -33,56 +36,61 @@ class Program
         return true;
     }
 
+    // memoization (current number, depth to seek) -> count
+    static Dictionary<(BigInteger, int), BigInteger> memo = new Dictionary<(BigInteger, int), BigInteger>();
+
+    static BigInteger recurse(BigInteger num, int depth)
+    {
+        if (depth == 0)
+        {
+            return 1;
+        }
+
+        if (memo.ContainsKey((num, depth)))
+        {
+            return memo[(num, depth)];
+        }
+
+        BigInteger ret = 1;
+
+        if (num == 0)
+        {
+            ret = recurse(1, depth - 1);
+        }
+        else
+        {
+
+            BigInteger first = 0;
+            BigInteger second = 0;
+            if (Split(num, ref first, ref second))
+            {
+                ret = recurse(first, depth - 1) + recurse(second, depth - 1);
+            }
+            else
+            {
+                ret = recurse(num * 2024, depth - 1);
+            }
+        }
+
+        memo.Add((num, depth), ret);
+
+        return ret;
+    }
+
     static void Main(string[] args)
     {
         //string[] lines = File.ReadAllLines("example.txt");
         string[] lines = File.ReadAllLines("input.txt");
 
-        var list = new LinkedList<BigInteger>();
         var s = lines[0].Split();
-        foreach (var chunk in s)
+        for (int steps = 1; steps < 76; steps++)
         {
-            list.AddLast(BigInteger.Parse(chunk));
-        }
-
-        for (int i = 0; i < 25; i++)
-        {
-            var cur = list.First;
-            while (cur != null)
+            BigInteger sum = 0;
+            foreach (var chunk in s)
             {
-                if (cur.Value == 0)
-                {
-                    cur.Value = 1;
-                }
-                else
-                {
-                    BigInteger first = 0;
-                    BigInteger second = 0;
-                    if (Split(cur.Value, ref first, ref second))
-                    {
-                        list.AddBefore(cur, first);
-                        cur.Value = second;
-                    }
-                    else
-                    {
-                        var old = cur.Value;
-                        cur.Value *= 2024;
-                        if (cur.Value / 2024 != old)
-                        {
-                            throw new Exception($"overflow 2024: {old} {cur.Value}");
-                        }
-                    }
-                }
-
-                cur = cur.Next;
+                sum += recurse(BigInteger.Parse(chunk), steps);
             }
+            Console.WriteLine($"day 11p2, step {steps}: {sum}");
         }
-
-        Console.WriteLine($"day 11p1: {list.Count}");
-        //foreach (var item in list)
-        //{
-        //    Console.Write(item + " ");
-        //}
-        //Console.WriteLine();
     }
 }
