@@ -2,12 +2,12 @@
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.ExceptionServices;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Numerics;
 
 class Program
 {
     // returns true if even split happened
-    static bool Split(int num, ref int first, ref int second)
+    static bool Split(BigInteger num, ref BigInteger first, ref BigInteger second)
     {
         first = 0;
         second = 0;
@@ -26,7 +26,7 @@ class Program
             return false;
         }
 
-        int mask = (int)Math.Pow(10, count/2);
+        BigInteger mask = BigInteger.Pow(10, count / 2);
         first = num / mask;
         second = num % mask;
 
@@ -38,11 +38,11 @@ class Program
         //string[] lines = File.ReadAllLines("example.txt");
         string[] lines = File.ReadAllLines("input.txt");
 
-        var list = new LinkedList<int>();
+        var list = new LinkedList<BigInteger>();
         var s = lines[0].Split();
         foreach (var chunk in s)
         {
-            list.AddLast(int.Parse(chunk));
+            list.AddLast(BigInteger.Parse(chunk));
         }
 
         for (int i = 0; i < 25; i++)
@@ -56,8 +56,8 @@ class Program
                 }
                 else
                 {
-                    int first = 0;
-                    int second = 0;
+                    BigInteger first = 0;
+                    BigInteger second = 0;
                     if (Split(cur.Value, ref first, ref second))
                     {
                         list.AddBefore(cur, first);
