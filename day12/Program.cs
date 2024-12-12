@@ -94,8 +94,8 @@ class Program
 
     static void Main(string[] args)
     {
-        string[] lines = File.ReadAllLines("example.txt");
-        //string[] lines = File.ReadAllLines("input.txt");
+        //string[] lines = File.ReadAllLines("example3.txt");
+        string[] lines = File.ReadAllLines("input.txt");
         char[][] grid = new char[lines.Length][];
         for (int i = 0; i < lines.Length; i++)
         {
