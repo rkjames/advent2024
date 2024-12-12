@@ -5,30 +5,27 @@ using System.Linq.Expressions;
 
 class Program
 {
-    // calculates perimeter of a cell that needs fence.
-    static int perimeter(char[][] grid, int i, int j)
+    // add all perimeter pieces to perimeter set
+    static void perimeter(char[][] grid, int i, int j, HashSet<(int, int, char)> perim)
     {
-        int ret = 0;
         char c = grid[i][j];
 
-        if (i == 0 || grid[i-1][j] != c)
+        if (i == 0 || grid[i - 1][j] != c)
         {
-            ret++;
+            perim.Add((i, j, 'u'));
         }
-        if (i == grid.Length - 1 || grid[i+1][j] != c)
+        if (i == grid.Length - 1 || grid[i + 1][j] != c)
         {
-            ret++;
+            perim.Add((i, j, 'd'));
         }
-        if (j == 0 || grid[i][j-1] != c)
+        if (j == 0 || grid[i][j - 1] != c)
         {
-            ret++;
+            perim.Add((i, j, 'l'));
         }
-        if (j == grid[i].Length -1|| grid[i][j+1] != c)
+        if (j == grid[i].Length - 1 || grid[i][j + 1] != c)
         {
-            ret++;
+            perim.Add((i, j, 'r'));
         }
-
-        return ret;
     }
 
     static int visit(char[][] grid, int i, int j)
@@ -73,13 +70,88 @@ class Program
         }
 
         // calculate perimeter
-        int perim = 0;
+        // get all perimeter pieces
+        // row, col, u/d/l/r
+        var perim = new HashSet<(int, int, char)>();
         foreach (var p in s)
         {
             int x = p.Item1;
             int y = p.Item2;
-            perim += perimeter(grid, x, y);
+            perimeter(grid, x, y, perim);
         }
+
+        // apply discount, by discarding runs
+        for (; ; )
+        {
+            var toRemove = new HashSet<(int, int, char)>();
+            foreach (var p in perim)
+            {
+                int row = p.Item1;
+                int col = p.Item2;
+                char d = p.Item3;
+
+                // check for horizontal runs
+                if (d == 'u' || d == 'd')
+                {
+                    // remove to the right
+                    for (int cur = col + 1; cur < grid[row].Length; cur++)
+                    {
+                        if (!perim.Contains((row, cur, d)))
+                        {
+                            break;
+                        }
+                        toRemove.Add((row, cur, d));
+                    }
+
+                    // remove to the left
+                    for (int cur = col - 1; cur >= 0; cur--)
+                    {
+                        if (!perim.Contains((row, cur, d)))
+                        {
+                            break;
+                        }
+                        toRemove.Add((row, cur, d));
+                    }
+                }
+
+                // check for vertical runs
+                if (d == 'l' || d == 'r')
+                {
+                    // remove down
+                    for (int cur = row + 1; cur < grid.Length; cur++)
+                    {
+                        if (!perim.Contains((cur, col, d)))
+                        {
+                            break;
+                        }
+                        toRemove.Add((cur, col, d));
+                    }
+
+                    // remove up
+                    for (int cur = row - 1; cur >= 0; cur--)
+                    {
+                        if (!perim.Contains((cur, col, d)))
+                        {
+                            break;
+                        }
+                        toRemove.Add((cur, col, d));
+                    }
+                }
+
+                if (toRemove.Count > 0)
+                {
+                    break;
+                }
+            }
+
+            if (toRemove.Count == 0)
+            {
+                // no removals
+                break;
+            }
+            perim.ExceptWith(toRemove);
+        }
+
 
         // mark as visited
         foreach (var p in s)
@@ -89,7 +161,7 @@ class Program
             grid[x][y] = '1';
         }
 
-        return perim * s.Count;
+        return perim.Count * s.Count;
     }
 
     static void Main(string[] args)
@@ -117,6 +189,6 @@ class Program
             }
         }
 
-        Console.WriteLine($"day 12p1: {sum}");
+        Console.WriteLine($"day 12p2: {sum}");
     }
 }
