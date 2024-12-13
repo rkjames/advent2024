@@ -22,6 +22,12 @@ class Program
         {
             return true;
         }
+        var s = current.ToString() + next.ToString();
+        var weird = BigInteger.Parse(s);
+        if (exists(weird, target, l.ToList()))
+        {
+            return true;
+        }
 
         return false;
     }
